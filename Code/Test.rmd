@@ -5,9 +5,6 @@ date: "10/19/2022"
 output: html_document
 ---
 
+this should be a merge conflict. there is the start of a camp song
 
-<<<<<<< HEAD
-this should be a merge conflict.
-=======
 I'm looking over a four leaf clover that I've over looked before
->>>>>>> 4ed51b3a1befb44e6d523eb0b66e5142f911f104
