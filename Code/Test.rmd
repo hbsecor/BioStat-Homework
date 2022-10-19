@@ -6,4 +6,8 @@ output: html_document
 ---
 
 
+<<<<<<< HEAD
 this should be a merge conflict.
+=======
+I'm looking over a four leaf clover that I've over looked before
+>>>>>>> 4ed51b3a1befb44e6d523eb0b66e5142f911f104
