@@ -6,4 +6,4 @@ output: html_document
 ---
 
 
-I'm trying to make a merge conflict!
+this should be a merge conflict.
