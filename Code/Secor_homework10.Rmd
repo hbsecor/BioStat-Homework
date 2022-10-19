@@ -1,0 +1,24 @@
+---
+title: "Secor_homework10"
+author: "HarrySecor"
+date: "9/22/2022"
+output: html_document
+---
+
+```{r}
+rm(list = ls())
+library(dplyr)
+library(ggplot2)
+library(here)
+library(tidyr)
+```
+
+
+```{r}
+DF <- read.csv(here("Data", "Squirrels.csv"), stringsAsFactors = TRUE)
+str(DF)
+
+DF <- filter(DF, Sex != "")
+
+```
+

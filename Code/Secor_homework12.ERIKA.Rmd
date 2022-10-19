@@ -1,0 +1,92 @@
+---
+title: "Secor_homework12"
+author: "HarrySecor"
+date: "9/27/2022"
+output: html_document
+---
+The comments you have within your code blocks confuse the difference between thought processes about your coding and thought processes about your scientific approach. Try to restrict comments within code blocks to those that are explicilty about how you write your code, and those outside of code blocks for why you write your code. I've made some adjustments below to show what I mean.
+
+The next code block clears R's brain and calls the needed libraries, in response to question 4 on the homework.
+```{r}
+rm(list = ls()) #clear's R's brain
+library(dplyr)
+library(ggplot2)
+library(here)
+```
+
+Next we were asked to pull in a dataset and name it Cover (Q4 and Q5 on the homework.)
+```{r}
+Cover <- read.csv(here("Data", "donnerville_percent_cover.csv"), stringsAsFactors = TRUE)
+```
+I'm not going to keep tweaking but you see what I mean regarding the comments I made on lines 7 - 9.
+```{r}
+# top comments are what I was supposed to do
+# glimpse(Cover)
+# head(Cover)
+# str(Cover)
+# tail(Cover)
+names(Cover)
+
+
+# filter Cover to take out all the NA results for Q7
+filter(Cover, Aspect != "")
+
+# summary of the filtered version of Aspect for Q7
+summary(select(filter(Cover, Aspect != ""), 6))
+```
+
+```{r}
+# how to rename column names 
+
+# Cover <- Cover %>% rename(Plot_type = Plot.type, Plot_dim = Plot.dim)
+names(Cover)
+
+names(Cover) <- c("Site","Date","Plot_type","Plot_dim","Slope","Aspect","Plot","Type","Percent")
+
+names(Cover)
+```
+
+
+```{r}
+# learn piping
+# this is what i was supposed to do
+# %>% = and then
+
+Cover %>% filter(Site == "Donnerville 1") %>% group_by(Type) %>% summarise(ave_precent_cover = mean(Percent))
+
+
+```
+
+
+```{r}
+# Q8 I'm skipping because all the column titles look fine
+# filter Cover2 to only have Donnerville 1
+# Q9 there are different summary for Bare, Bryophytes, and Vascular
+# summary instead of mean because mean doesn't work with num's
+Cover2 <- filter(Cover, Site == "Donnerville 1")
+summary(select(filter(Cover2, Type == "Bare"),9))
+summary(select(filter(Cover2, Type == "Bryophytes"),9))
+summary(select(filter(Cover2, Type == "Vascular"),9))
+
+# to delete a data frame do rm(dataframe)
+rm(Cover2)
+
+```
+You ran into issues in the above code block because you didn't use `na.rm = T` in your averages. Take a look at this example as a way to solve the problem with more efficient code.
+
+```{r}
+Cover %>% filter(Site == "Donnerville 1") %>% group_by(Type) %>% summarize(avg_percent_cover = mean(Percent, na.rm = T))
+```
+
+
+```{r}
+# Q10 take the same code for the summary of Vascular from 8 and use Cover not Cover2
+summary(select(filter(Cover, Type == "Vascular"),9))
+```
+
+```{r}
+# what I was supposed to do though what I did works
+perCov <- Cover %>% filter(Type == "Vascular") %>% summarise(ave_precent = mean(Percent))
+```
+
+

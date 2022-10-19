@@ -1,0 +1,88 @@
+---
+title: "Secor_homework12"
+author: "HarrySecor"
+date: "9/27/2022"
+output: html_document
+---
+
+```{r}
+# this program fragment clears R's brain and calls the needed libraries
+# fulfills Q4
+rm(list = ls())
+library(dplyr)
+library(ggplot2)
+library(here)
+```
+
+```{r}
+# find and calls the donnerville data set and assign it to an argument called Cover
+# fulfills Q4 & 5 
+Cover <- read.csv(here("Data", "donnerville_percent_cover.csv"), stringsAsFactors = TRUE)
+```
+
+```{r}
+# top comments are what I was supposed to do
+# glimpse(Cover)
+# head(Cover)
+# str(Cover)
+# tail(Cover)
+names(Cover)
+
+
+# filter Cover to take out all the NA results for Q7
+filter(Cover, Aspect != "")
+
+# summary of the filtered version of Aspect for Q7
+summary(select(filter(Cover, Aspect != ""), 6))
+```
+
+```{r}
+# how to rename column names 
+
+# Cover <- Cover %>% rename(Plot_type = Plot.type, Plot_dim = Plot.dim)
+names(Cover)
+
+names(Cover) <- c("Site","Date","Plot_type","Plot_dim","Slope","Aspect","Plot","Type","Percent")
+
+names(Cover)
+```
+
+
+```{r}
+# learn piping
+# this is what i was supposed to do
+# %>% = and then
+
+Cover %>% filter(Site == "Donnerville 1") %>% group_by(Type) %>% summarise(ave_precent_cover = mean(Percent))
+
+
+```
+
+
+```{r}
+# Q8 I'm skipping because all the column titles look fine
+# filter Cover2 to only have Donnerville 1
+# Q9 there are different summary for Bare, Bryophytes, and Vascular
+# summary instead of mean because mean doesn't work with num's
+Cover2 <- filter(Cover, Site == "Donnerville 1")
+summary(select(filter(Cover2, Type == "Bare"),9))
+summary(select(filter(Cover2, Type == "Bryophytes"),9))
+summary(select(filter(Cover2, Type == "Vascular"),9))
+
+# to delete a data frame do rm(dataframe)
+rm(Cover2)
+
+```
+
+
+```{r}
+# Q10 take the same code for the summary of Vascular from 8 and use Cover not Cover2
+summary(select(filter(Cover, Type == "Vascular"),9))
+```
+
+```{r}
+# what I was supposed to do though what I did works
+perCov <- Cover %>% filter(Type == "Vascular") %>% summarise(ave_precent = mean(Percent))
+```
+
+

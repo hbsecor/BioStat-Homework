@@ -1,0 +1,54 @@
+---
+title: "Applying more dplyr to my data"
+author: "HarrySecor"
+date: "9/29/2022"
+output: html_document
+---
+
+the goal is to reinforce concepts from GSWR Chapter 2 and Chapter 3 and to push you to apply functions from the dplyr package more independently
+
+have a code fragment to clear R 
+try to keep  the answers for each question in a separate code fragment
+
+
+```{r}
+rm(list = ls())
+library(dplyr)
+library(ggplot2)
+library(here)
+```
+
+get the data into a R Data-Frame
+
+```{r}
+DF <- read.csv(here("Data", "day_one_data_for_homework13.csv"), stringsAsFactors = TRUE)
+```
+
+view said data frame
+
+```{r}
+View(DF)
+```
+
+rename the names of the column headers to look better and make better sense 
+
+```{r}
+names(DF) <- c("Name", "Date", "Part", "Tree_num", "Species", "leaf_length", "leaf_width", "leaf_units")
+```
+
+make a seperate data frame for measurements in inches called English (should be imperial)
+
+```{r}
+English <- filter(DF, leaf_units == "inches" )
+```
+
+I'm not sure if this is asking to take all the dates and make them uniform 
+or to leave the dates as is and just group them in there different formats
+
+```{r}
+Dates_uniform <- mutate(DF, Date = "8/24/2022")
+
+Uniform_dates <- arrange(DF, Date, group_by = TRUE)
+```
+
+

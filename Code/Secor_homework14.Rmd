@@ -1,0 +1,75 @@
+---
+title: "Using dplyr to fix mistakes"
+author: "HarrySecor"
+date: "10/2/2022"
+output: html_document
+---
+
+make sure to bring in the regular clear and librarys code
+
+```{r}
+rm(list = ls())
+library(dplyr)
+library(ggplot2)
+library(here)
+```
+
+import the needed CSV file without stringsAsFactors
+also give a summary of DF
+
+```{r}
+DF <- read.csv(here("Data", "drug_resistance.csv"))
+summary(DF)
+levels(DF)
+```
+
+re-import the needed CSV file with stringsAsFactors = TRUE
+also give a summary of DF
+
+```{r}
+DF <- read.csv(here("Data", "drug_resistance.csv"), stringsAsFactors = TRUE)
+summary(DF)
+levels(DF)
+```
+
+without stringsAsFactors
+there are no difference in the treatment or tech.name columns and it doesn't have much information on them
+
+with stringsAsFactors
+in treatment and tech.name there is some data that can be condensed as they are the same just with spelling errors. 
+a difference in capitalization or just a different way it was written 
+
+both
+the numbers are the same for Plate_n and colony.count
+
+levels returns null for both and unique returns essentially DF
+
+start with treatment because already sorted into rows 
+1-10 control, 11-20 drug x 2, 21-30 drug x 3
+
+```{r}
+DF$Treatment[1:10] <- "control"
+DF$Treatment[11:20] <- "drug x 2"
+DF$Treatment[21:30] <- "drug x 3"
+```
+
+see what actually need to be done for tech.name
+Brian can't spell his name 
+Becca's isn't consistent with capitalization 
+the others are actually fine
+
+```{r}
+DF$tech.name[4] <- "Brian"
+DF$tech.name[15] <- "Brian"
+DF$tech.name[21:23] <- "Brian"
+DF$tech.name[14] <- "Becca"
+DF$tech.name[19] <- "Becca"
+```
+
+to test work call summary of DF looks better
+
+```{r}
+DF$Treatment <- factor(DF$Treatment)
+DF$tech.name <- factor(DF$tech.name)
+summary(DF)
+```
