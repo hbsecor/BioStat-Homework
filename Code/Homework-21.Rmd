@@ -1,0 +1,70 @@
+---
+title: "Homework-21"
+author: "HarrySecor"
+date: "10/20/2022"
+output: html_document
+---
+
+plotting basics with ggplot
+my tutorial script
+lots and lots of annotation
+
+```{r}
+# clear the decks
+rm(list = ls())
+# libraries I need
+library(dplyr)
+library(ggplot2)
+library(here)
+```
+
+get the data
+check out the data
+make my first ggplot picture
+
+```{r}
+compensation <- read.csv(here("Data", "compensation.csv"))
+glimpse(compensation)
+ggplot(compensation, aes(x = Root, y = Fruit)) + geom_point()
+```
+
+all plot methods just commented out all but one
+
+```{r}
+#  ggplot(compensation, aes(x = Root, y = Fruit)) + geom_point() + theme_bw()
+
+# ggplot(compensation, aes(x = Root, y = Fruit)) + geom_point(size = 5) + theme_bw()
+
+# ggplot(compensation, aes(x = Root, y = Fruit)) + geom_point(size = 5) + xlab("Root Biomass") + ylab("Fruit Production") + theme_bw()
+
+# ggplot(compensation, aes(x = Root, y = Fruit, colour = Grazing)) + geom_point(size = 5) + xlab("Root Biomass") + ylab("Fruit Production") + theme_bw()
+
+ggplot(compensation, aes(x = Root, y = Fruit, shape = Grazing)) + geom_point(size = 5) + xlab("Root Biomass") + ylab("Fruit Production") + theme_bw()
+```
+
+
+
+```{r}
+ggplot(compensation, aes(x = Grazing, y = Fruit)) + geom_point() + geom_point(size = 4, colour = 'lightgrey', alpha = 0.5) + xlab("Grazing treatment") + ylab("Fruit Production") + theme_bw()
+```
+
+
+
+```{r}
+# ggplot(compensation, aes(x = Fruit)) + geom_histogram()
+# ggplot(compensation, aes(x = Fruit)) + geom_histogram(bins = 10)
+ggplot(compensation, aes(x = Fruit)) + geom_histogram(binwidth = 15)
+```
+
+
+
+```{r}
+ggplot(compensation, aes(x = Fruit)) + geom_histogram(binwidth = 15) + facet_wrap(~Grazing)
+```
+```{r}
+ggsave("ThatCoolHistogramOfFruit.png")
+```
+
+
+
+
