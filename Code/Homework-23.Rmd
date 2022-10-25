@@ -1,0 +1,82 @@
+---
+title: "Homework-23"
+author: "HarrySecor"
+date: "10/24/2022"
+output: html_document
+---
+
+using SOM_percent
+
+```{r}
+rm(list = ls())
+library(dplyr)
+library(ggplot2)
+library(here)
+```
+
+import the data
+
+```{r}
+soil <- read.csv(here("Data", "soil_data.csv"))
+```
+
+clean needed data
+
+```{r}
+# scatter plot
+# field name needs to rename to just forest name
+
+soil$Field.Name[1:9] <- "DEGRASSE"
+soil$Field.Name[10:18] <- "DONNERVILLE"
+soil$Field.Name[19:27] <- "KIP TRACT"
+soil$Field.Name[28:36] <- "PEAVINE"
+soil$Field.Name[37:45] <- "SOUTH HAMMOND"
+
+```
+
+#Dotplots
+
+% organic matter
+
+```{r}
+ggplot(soil, aes(y = SOM_percent, x = Field.Name)) + geom_point() + ylab("% Organic Matter") + xlab("Field")
+```
+
+Ca ppm
+
+```{r}
+ggplot(soil, aes(y = Ca.ppm, x = Field.Name)) + geom_point() + ylab("Ca ppm") + xlab("Field")
+```
+
+#Boxplots
+
+% organic matter
+
+```{r}
+ggplot(soil, aes(x = Field.Name, y = SOM_percent)) + geom_boxplot() + ylab("% Organic Matter") + xlab("Field")  + theme_bw()
+```
+
+Ca ppm
+
+```{r}
+ggplot(soil, aes(x = Field.Name, y = Ca.ppm)) + geom_boxplot() + ylab("Ca ppm") + xlab("Field")  + theme_bw()
+```
+
+
+#Histograms
+
+% organic matter
+
+```{r}
+ggplot(soil, aes(x = SOM_percent)) + geom_histogram(binwidth = 15) + xlab("% Organic Matter") 
+```
+
+Ca ppm
+with bin with 15 and 30
+
+```{r}
+ggplot(soil, aes(x = Ca.ppm)) + geom_histogram(binwidth = 15) + xlab("Ca ppm")
+ggplot(soil, aes(x = Ca.ppm)) + geom_histogram(binwidth = 30) + xlab("Ca ppm")
+```
+
+
