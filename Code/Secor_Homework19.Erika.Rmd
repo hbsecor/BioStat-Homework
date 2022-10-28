@@ -1,0 +1,81 @@
+---
+title: "Secor_homework_19"
+author: "HarrySecor"
+date: "10/16/2022"
+output: html_document
+---
+
+# Homework 19 
+
+## else section of the homework
+
+### main notes
+
+I just went down through the homework and abbreviated it in to the 7 steps of R code below
+I tried to keep each R code chunk simple doing one to two real commands each
+There were honestly a few things I had to look up because I did not remember how exactly to do them
+
+# list of steps
+
+step 1: enter the initial setup code to import libraries and to clear R's memory
+
+```{r}
+rm(list = ls())
+library(dplyr)
+library(ggplot2)
+library(here)
+```
+
+step 2: import the leaf data into a data set called Leaves
+
+```{r}
+Leaves <- read.csv(here("Data", "Class_leaf_measurements.csv"), stringsAsFactors = F)
+```
+
+step 3: use the str() function on Leaves
+
+```{r}
+str(Leaves)
+```
+
+step 4: use the names function to rename the column headers to make them look good and make sense
+
+```{r}
+names(Leaves) <- c("Tree_num", "Species", "Leaf_num", "DBH_cm", "Petiole_length", "Total_lenght_cm", "Middle_lobe_lenght_cm", "Middle_lobe_width_cm", "Person")
+```
+
+step 5: convert species into a factor variable and make sure all the names are Norway maple, Red maple, or Sugar maple
+I looked through the data to see where the problems were and sorted them by tree so that's why they are in a weird order
+
+```{r}
+Leaves$Species[121:130] <- "Norway maple"
+Leaves$Species[11:20] <- "Red maple"
+Leaves$Species[131:140] <- "Red maple"
+Leaves$Species[141:150] <- "Sugar maple"
+Leaves$Species[21:30] <- "Sugar maple"
+Leaves$Species <- as.factor(Leaves$Species)
+```
+
+YOU CAN DO THIS IN A MORE AUTOMATED WAY (IMAGINE YOU HAD 40,000 ROWS OF DATA - IT WOULD BE IMPOSSIBLE TO LOOK THROUGH TO SEE WHERE THE PROBLEMS ARE) USING THE `which()` FUNCTION TO FIND THE PROBLEMATIC ROWS AS FOLLOWS (I JUST DEMONSTRATED FOR NORWAY MAPLE):
+
+```{r}
+fixNorway<-which(Leaves$Species == "Norway Maple"| Leaves$Species == "Norway mapel") #identifies the row numbers that meet a condition
+Leaves$Species[fixNorway]<-"Norway maple" #uses indexing to find the rows
+unique(Leaves$Species)
+```
+
+step 6: create a new data frame with just sugar maple data called Sugar without Person, Leaf_num, and Tree_num
+looked up ways to delete columns and go the second line of code as the result
+
+```{r}
+Sugar <- filter(Leaves, Species == "Sugar maple")
+Sugar <- subset(Sugar, select = -c(Tree_num, Leaf_num, Person))
+```
+
+step 7: make a histogram of the petiole data from the Sugar data frame
+im not sure if we have gone though how to make a histogram that or I fogot so I looked it up
+
+```{r}
+ggplot(Sugar, aes(x=Petiole_length)) + geom_histogram()
+```
+
