@@ -101,7 +101,7 @@ ggplot(YNS, aes(x = age,)) + geom_histogram(binwidth = 2) + ylab("Number")
 ```
 
 make a box plot with x = age and y = costume. separate it with facet_wrap by type.
-put light grey see though points on the plot
+put light grey see though points on the plot. didnt use coord_flip() just switched x and y
 
 ```{r}
 ggplot(halloween, aes(x = age, y = Costume)) + geom_boxplot() + geom_point(size = 4, color = 'lightgrey', alpha = 0.5) + xlab("Child age (years)") + ylab("Costume  choice") + theme_bw() + facet_wrap(~Type)
