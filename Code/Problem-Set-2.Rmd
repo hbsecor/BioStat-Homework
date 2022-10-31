@@ -1,0 +1,109 @@
+---
+title: "Problem-Set-2"
+author: "HarrySecor"
+date: "10/30/2022"
+output: html_document
+---
+
+regular set up
+
+```{r}
+rm(list = ls())
+library(dplyr)
+library(ggplot2)
+library(here)
+```
+
+read the Halloween data
+
+```{r}
+halloween <- read.csv(here("Data", "Halloween_data_PS2.csv"))
+```
+
+clean up the data set by making sure all the names are the same so they read as one factor
+
+```{r}
+halloween$Costume[1:8] <- "Wonder woman" 
+
+fixClown <- which(halloween$Costume == "clown"| halloween$Costume == "creepy clown") 
+halloween$Costume[fixClown]<- "Creepy clown"
+
+halloween$Costume[25:27] <- "Witch"
+halloween$Costume[28:30] <- "Pirate" # didn't need to change this one  but thought it would look better
+
+fixType <- which(halloween$Type == "scary")
+halloween$Type[fixType] <- "Scary" 
+halloween$Type[26] <- "Scary" # for some reason the other way didnt work for this one so I had to fix it like this
+
+unique(halloween$Costume)
+
+```
+
+make costume and type into factors
+
+```{r}
+halloween$Costume <- as.factor(halloween$Costume)
+halloween$Type <- as.factor(halloween$Type)
+```
+
+look at some info about the data for fun
+
+```{r}
+summary(halloween)
+dim(halloween)
+names(halloween)
+```
+
+do not need next code fragment
+was thingking that I could use these but then I relized I just over complicated the next step and really didn't need them
+
+```{r}
+#scary <- filter(halloween, Type == "Scary")
+#notScary <- filter(halloween, Type == "Not scary")
+WonderWoman <- filter(halloween, Costume == "Wonder Woman")
+CreepyClown <- filter(halloween, Costume == "Creepy clown")
+Unicorn <- filter(halloween, Costume == "Unicorn")
+Rabbit <- filter(halloween, Costume == "Rabbit")
+Witch <- filter(halloween, Costume == "Witch")
+Pirate <- filter(halloween, Costume == "Pirate")
+Mouse <- filter(halloween, Costume == "Mouse")
+Zombie <- filter(halloween, Costume == "Zombie")
+Mermaid <- filter(halloween, Costume == "Mermaid")
+```
+
+I tried to keep more of the data but that wasn't working when it came time to make the graph
+tried to keep the two extra lines I removed due to the NA's but it caused errors to occur so gave up
+
+```{r}
+hw <- halloween[-c(4, 12, 29, 30),]
+#hw <- halloween[-c(12, 30),]
+#hw2 <- halloween[-c(4, 29),]
+meanCostume <- summarise(group_by(hw, Costume), meanCandies = mean(candy_pieces), meanAge = mean(age))
+#meanCostume <- summarise(group_by(hw, Costume), meanCandies = mean(candy_pieces))
+#meanCostume2 <- summarise(group_by(hw2, Costume), meanAge = mean(age))
+#meanCostume$Age <- subset(meanCostume2, select = meanAge)
+meanCostume$Type <- c("Scary", "Not scary", "Not scary", "Scary", "Not scary", "Not scary", "Scary", "Not scary", "Scary") # wasnt sure how to keep a Type row so just made a new one
+meanCostume$Type <- as.factor(meanCostume$Type) # make sure Type is a factor
+str(meanCostume)
+```
+
+graph of the means where y = candies taken and x = age with color showing Type of costume
+
+```{r}
+ggplot(meanCostume, aes(x = meanAge, y = meanCandies, color = Type)) + geom_point(size = 5) + xlab("Mean Age of Kids(years)") + ylab("Mean Number of Candies Taken")
+```
+
+make a new DF to look at just not scary costumes and under 10.  then plot it with a histogram
+
+```{r}
+YNS <- filter(halloween, Type == "Not scary" & age <= 10) # YNS = young not scary
+ggplot(YNS, aes(x = age,)) + geom_histogram(binwidth = 2) + ylab("Number")
+```
+
+make a box plot with x = age and y = costume. separate it with facet_wrap by type.
+put light grey see though points on the plot
+
+```{r}
+ggplot(halloween, aes(x = age, y = Costume)) + geom_boxplot() + geom_point(size = 4, color = 'lightgrey', alpha = 0.5) + xlab("Child age (years)") + ylab("Costume  choice") + theme_bw() + facet_wrap(~Type)
+```
+
