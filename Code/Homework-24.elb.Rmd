@@ -1,0 +1,73 @@
+---
+title: "Homework-24"
+author: "HarrySecor"
+date: "10/27/2022"
+output: html_document
+---
+
+# setup
+
+```{r}
+rm(list = ls())
+library(dplyr)
+library(ggplot2)
+library(here)
+```
+
+## bring in data sets
+
+```{r}
+lady <- read.csv(here("Data", "ladybirds.csv"), stringsAsFactors = TRUE)
+ozone <- read.csv(here("Data", "ozone.csv"), stringsAsFactors = TRUE)
+glimpse(lady)
+glimpse(ozone)
+```
+
+part 1 code
+
+```{r}
+total <- lady %>% group_by(Habitat, colour) %>% summarise(total.number = sum(number))
+```
+
+
+```{r}
+ggplot(total, aes(x = Habitat, y = total.number, fill = colour)) + geom_bar(stat = 'identity', position = 'dodge') + scale_fill_manual(values = c(black = "black", red = "red"))
+```
+
+
+```{r}
+lady.mat <- xtabs(number ~ Habitat + colour, data = lady)
+lady.mat
+
+chisq.test(lady.mat)
+
+lady.chi <- chisq.test(lady.mat)
+names(lady.chi)
+
+lady.chi$expected
+```
+
+part 2 code
+
+```{r}
+ggplot(ozone, aes(x = Ozone)) + geom_histogram(binwidth = 10) + facet_wrap(~ Garden.location, ncol = 1) + theme_bw()
+```
+
+
+```{r}
+ozone.ave  <- ozone %>% group_by(Garden.location) %>% summarise(total.number = sum(Ozone))
+```
+
+
+```{r}
+t.test(Ozone ~ Garden.location, data = ozone)
+```
+
+
+```{r}
+var.test(Ozone ~ Garden.location, data = ozone)
+```
+
+end of chapter 5 parts 1 and 2
+
+THIS ALL LOOKS GOOD, BUT YOU HAVEN'T EXPLAINED WHY YOU RAN CERTAIN CODE NOR HOW TO INTERPRET THE OUTPUT OF DIFFERENT CODE CHUNKS, SO I CAN'T TELL THAT YOU ARE ACTUALLY THINKING ABOUT WHAT YOU'RE DOING.
