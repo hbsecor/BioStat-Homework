@@ -39,6 +39,10 @@ unique(halloween$Costume)
 
 ```
 
+The reason "scary" did't work is there was one with a space after the word e.g. "scary " and your search didn't find it. Adjusting the `which()` would be a better fix than manual indexing.
+
+
+
 make costume and type into factors
 
 ```{r}
@@ -92,6 +96,10 @@ graph of the means where y = candies taken and x = age with color showing Type o
 ```{r}
 ggplot(meanCostume, aes(x = meanAge, y = meanCandies, color = Type)) + geom_point(size = 5) + xlab("Mean Age of Kids(years)") + ylab("Mean Number of Candies Taken")
 ```
+You got there, but definately made it complicated. You could use `group_by()` with both costume and type e.g. `group_by(Costume, Type)` and then summarise and it would get you to the data frame you need more efficiently.
+
+Also, in  your `summarise()` statement, for `mean()` you should include `na.rm = T` and that will take care of your NA issue.
+
 
 make a new DF to look at just not scary costumes and under 10.  then plot it with a histogram
 
