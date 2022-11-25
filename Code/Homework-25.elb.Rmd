@@ -1,0 +1,75 @@
+---
+title: "Homework-25"
+author: "HarrySecor"
+date: "10/30/2022"
+output: html_document
+---
+
+```{r}
+rm(list = ls())
+library(dplyr)
+library(ggplot2)
+library(here)
+library(ggfortify)
+```
+
+5.5 reading
+
+```{r}
+plant <- read.csv(here("Data", "plant.growth.rate.csv"), stringsAsFactors = TRUE)
+glimpse(plant)
+```
+
+```{r}
+ggplot(plant, aes(x = soil.moisture.content, y = plant.growth.rate)) + geom_point() + ylab("Plant Growth Rate (mm/Week)") + theme_bw()
+```
+
+```{r}
+model_pgr <- lm(plant.growth.rate ~ soil.moisture.content, data = plant)
+autoplot(model_pgr, smooth.colour = NA)
+```
+
+
+```{r}
+anova(model_pgr)
+summary(model_pgr) # starts at call:
+```
+
+
+```{r}
+ggplot(plant, aes(x = soil.moisture.content, y = plant.growth.rate)) + geom_point() + geom_smooth(method = 'lm') +  ylab("Plant Growth Rate (mm/Week)") + theme_bw()
+```
+
+5.6 reading
+
+```{r}
+growth <- read.csv(here("Data", "Daphniagrowth.csv"))
+glimpse(growth)
+```
+
+
+```{r}
+# ggplot(growth, aes(x = parasite, y = growth.rate)) + geom_boxplot() + theme_bw()
+ggplot(growth, aes(x = parasite, y = growth.rate)) + geom_boxplot() + theme_bw() + coord_flip()
+```
+
+not sure why one of my graphs is differnt then the books but it seems close enough
+
+```{r}
+model_grow <- lm(growth.rate ~ parasite, data = growth)
+autoplot(model_grow, smooth.colour = NA)
+```
+
+
+```{r}
+anova(model_grow)
+summary(model_grow) # starts at call:
+```
+
+
+```{r}
+sumDat <- growth %>% group_by(parasite) %>% summarize(meanGR = mean(growth.rate))
+sumDat
+```
+
+AGAIN, THE CODE WORKS, BUT YOU SHOULD BE MAKING NOTATIONS TO YOURSELF ABOUT WHY YOU ARE E.G. RUNNING CERTAIN CODE AND WHAT THE OUTPUT MEANS.

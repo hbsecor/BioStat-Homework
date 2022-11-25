@@ -1,0 +1,226 @@
+---
+title: "Homework-26"
+author: "HarrySecor"
+date: "11/2/2022"
+output: html_document
+---
+
+```{r}
+rm(list = ls())
+library(tidyverse)
+library(here)
+library(ggfortify)
+```
+
+
+
+```{r}
+soil <- read.csv(here("Data", "soil_reduced-1.csv"), stringsAsFactors = T)
+```
+
+A. before we begin any analysis, we need to check out data for possible errors/outliers. let's begin with that.
+
+```{r}
+levels(soil$Forest)
+```
+
+B. let's check soil organic matter and soil calcium
+Start with a histogram
+
+```{r}
+ggplot(soil, aes(x = SOM_percent)) + geom_histogram()
+```
+
+calcium ppm histogram
+
+```{r}
+ggplot(soil, aes(x = Ca_ppm)) + geom_histogram()
+```
+
+look at the data set through glimps and summary to see if there's andything off
+
+```{r}
+glimpse(soil)
+summary(soil)
+```
+
+
+## 1. Is there a relationship between Soil organic matter (SOM, %) and soil calcium (Ca_ppm)?
+
+both variables are continuous
+
+```{r}
+ggplot(soil, aes(x = SOM_percent, y = Ca_ppm, color = Forest)) + geom_point() + ylab("Ca ppm") + xlab("SOM %") + theme_bw()
+```
+From looking at the data, it appears there may be a weak positive relationship between SOM percent and calcium ppm
+
+can I guess the slope or y-intercept?
+slope c. 1000/53 = 18ish, y int c. -5? 0? right around there 
+
+what statistical model fits these data?
+Both response and predictor are continuous so linear regression seems appropriate
+
+so, let's construct the model
+```{r}
+SOM_CA_mod <- lm(Ca_ppm ~ SOM_percent, data = soil)
+```
+
+now I need to check model assumptions before interpreting
+
+```{r}
+autoplot(SOM_CA_mod)
+```
+
+based on my observations of the autoplot results, I'm modestly comfortable that my data meet the lm() assumptions.
+
+now look at model outcome
+```{r}
+anova(SOM_CA_mod)
+summary(SOM_CA_mod)
+```
+
+we accept the null hypothesis
+
+
+##2. Does the abundance of worms differ between Donnerville and the Kip Tract?
+
+separate out Donnerville and Kip Tract 
+
+```{r}
+Q2 <- filter(soil, Forest == "DONNERVILLE" | Forest == "KIP TRACT")
+```
+
+check for possible outliers
+
+```{r}
+summary(Q2$Worms)
+```
+
+does not seem to be any outlires for Worms
+
+```{r}
+ggplot(Q2, aes(x = Worms)) + geom_histogram() + facet_wrap(~Forest)
+```
+
+from the histogram there does look to be some differences
+
+the best plot to show worms is a box and whisker plot
+
+```{r}
+ggplot(Q2, aes(x = Forest, y = Worms)) + geom_boxplot() + geom_point(size = 4, color = 'lightgrey', alpha = 0.5)
+```
+
+for Donnerville the range is 1-3 with the mean of 2 and an IQR of 1-2
+For the Kip track the range is 2-5 with the mean of 4 and an IQR of 2-5
+
+```{r}
+Q2lm <- lm(Worms ~ Forest, data = Q2)
+autoplot(Q2lm)
+```
+
+WHY DID YOU RUN THIS AS A LINEAR MODEL? YOU HAVE COUNT DATA (NUMBER OF WORMS) SO THIS SHOULD BE A CHI-SQUARE TEST.
+
+Normal Q-Q looks pretty good not too far off of the line
+residual  vs fitted is almost identical to the line
+
+chi2 test is the best for categorical and discrete
+
+```{r}
+chiWorm <- xtabs(Worms ~ Forest, data = Q2)
+
+chisq.test(chiWorm)
+summary(chiWorm)
+```
+
+
+with P-value < 0.05 we fail to reject the hypothesis
+
+
+## 3. Does the abundance of soil Magnesium (Mg_ppm) differ between Peavine and South Hammond?
+
+filter out the two forests in question
+
+```{r}
+Q3 <- filter(soil, Forest == "PEAVINE" | Forest == "SOUTH HAMMOND")
+```
+
+check for outliers in magesium
+
+```{r}
+summary(Q3$Mg_ppm)
+```
+there may be a possible outlier at the to of the range check with histogram
+
+```{r}
+ggplot(Q3, aes(x = Mg_ppm)) + geom_histogram() + facet_wrap(~Forest)
+```
+
+the outlier may be a little high but I think that its not worth taking out unless it is greatly affecting the data
+
+next check a box and whisker plot
+
+```{r}
+ggplot(Q3, aes(x = Forest, y = Mg_ppm)) + geom_boxplot() + geom_point(size = 4, color = 'lightgrey', alpha = 0.5)
+```
+
+YOU DIDN'T SAY WHY YOU ARE RUNNING A LINEAR MODEL HERE. WHAT IS THE STRUCTURE OF THE DATA THAT MAKES THIS THE APPROPRIATE TEST?
+
+```{r}
+Q3lm <- lm(Mg_ppm ~ Forest, data = Q3)
+autoplot(Q3lm)
+```
+
+the graphs of the data look good other than one or two outliers
+
+
+a 2 sample t test is best again because its 2 categorical and ratio data
+
+```{r}
+t.test(Mg_ppm ~ Forest, data = Q3)
+```
+
+with a P-value > 0.05 we accept the null hypothesis
+
+
+## 4. Does the abundance of zinc (Zn_ppm) differ among forests?
+
+looking at all forests so just look at a summary of zink
+
+```{r}
+summary(soil$Zn_ppm)
+```
+there is a large difference between Q3 and max so there may be an outlier 
+
+time for a histogram
+
+```{r}
+ggplot(soil, aes(x = Zn_ppm)) + geom_histogram()
+```
+there is an outlier at the top of the data spectrum but it is close enough to be a legitimate data point
+
+Forests are Categorical and Zink is ratio
+
+make a box plot with an understandable message
+
+```{r}
+ggplot(soil, aes(x = Zn_ppm, y = Forest)) + geom_boxplot() + geom_point(size = 4, color = 'lightgrey', alpha = 0.5)
+```
+now the highest measurement looks too much like an outlier as its in the location with the least Zn_ppm
+
+```{r}
+Q4lm <- lm(Zn_ppm ~ Forest, data = soil)
+autoplot(Q4lm)
+```
+
+the graphs from autoplot look good with the exception of several outliers
+
+the next test should be an ANOVA test as Forest has 9 categories and Zn_ppm is ratio data
+
+GOOD
+
+```{r}
+anova(Q4lm)
+summary(Q4lm) # starts at Call:
+```
+
+with a P-Value > 0.05 we accept the null hypothesis.
